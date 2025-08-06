@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
-use migren::default_migrations_dir;
+use crate::util::default_migrations_dir;
 
 #[derive(Subcommand, Debug)]
 pub enum Command {

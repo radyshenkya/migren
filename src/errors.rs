@@ -8,4 +8,6 @@ pub enum MigrenError {
     Envy(#[from]envy::Error),
     #[error("Failed to parse CLI arguments")]
     Clap(#[from]clap::Error),
+    #[error(transparent)]
+    Io(#[from]std::io::Error),
 }

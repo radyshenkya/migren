@@ -3,15 +3,17 @@ mod commands;
 mod env_args;
 mod errors;
 mod schemas;
+mod util;
 
 use clap::Parser;
-use log::{error, debug};
+use log::{error};
+use util::create_dir_if_not_exists;
 
 async fn run_migren() -> errors::Result<()> {
     let cli = cli_args::CliArgs::parse();
-    debug!(target: "main", "Hello world! {:?}", cli);
-
     let env_args = envy::from_env::<env_args::EnvArgs>()?;
+
+    create_dir_if_not_exists(&cli.directory)?;
 
     Ok(())
 }
