@@ -22,5 +22,6 @@ pub struct MigrationData {
 /// Holds every migration. Root object for .migren.json file
 #[derive(Deserialize, Serialize, Debug)]
 pub struct MigrationsData {
-    migrations: Vec<MigrationData>
+    pub migrations: Vec<MigrationData>,
+    pub migren_version: String,
 }

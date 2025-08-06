@@ -9,7 +9,7 @@ pub fn default_migrations_dir() -> PathBuf {
 
 pub fn create_dir_if_not_exists(path: &PathBuf) -> crate::errors::Result<()>{
     if !std::fs::exists(path)? {
-        log::info!(target: "migren", "Directory {:?} does not exists. Creating it", path);
+        log::info!(target: "create_dir_if_not_exists", "Directory {:?} does not exists. Creating it", path);
         std::fs::create_dir(path)?;
     }
 
