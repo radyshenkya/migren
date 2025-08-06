@@ -1,27 +1,29 @@
 mod cli_args;
 mod commands;
-mod errors;
 mod env_args;
+mod errors;
+mod schemas;
 
 use clap::Parser;
-use log::{info, error};
+use log::{error, debug};
+
+async fn run_migren() -> errors::Result<()> {
+    let cli = cli_args::CliArgs::parse();
+    debug!(target: "main", "Hello world! {:?}", cli);
+
+    let env_args = envy::from_env::<env_args::EnvArgs>()?;
+
+    Ok(())
+}
 
 #[tokio::main]
 async fn main() {
     env_logger::init();
 
-    let res: errors::Result<()> = (|| {
-        let cli = cli_args::CliArgs::parse();
-        info!(target: "main", "Hello world! {:?}", cli);
-
-        let env_args =
-            envy::from_env::<env_args::EnvArgs>()?;
-
-        Ok(())
-    })();
+    let res: errors::Result<()> = run_migren().await;
 
     match res {
-        Ok(_) => {},
+        Ok(_) => {}
         Err(err) => error!(target: "main", "Program failed: {:#?}", err),
     }
 }
