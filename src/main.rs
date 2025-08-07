@@ -3,14 +3,11 @@ mod commands;
 mod env_args;
 mod errors;
 mod features;
-mod schemas;
 mod util;
 
 use clap::Parser;
 use log::error;
 use util::create_dir_if_not_exists;
-
-use crate::{features::load_migrations_data, util::MIGRATIONS_FILE_NAME};
 
 async fn run_migren() -> errors::Result<()> {
     let cli = cli_args::CliArgs::parse();
@@ -18,12 +15,11 @@ async fn run_migren() -> errors::Result<()> {
 
     create_dir_if_not_exists(&cli.directory)?;
 
-    let mut migration_data_file_path = cli.directory.clone();
-    migration_data_file_path.push(MIGRATIONS_FILE_NAME);
-    let migration_data_file_path = migration_data_file_path;
-
-    let migration_data = load_migrations_data(&migration_data_file_path)?;
-    log::info!(target: "run_migren", "Migration_data: {:?}", migration_data);
+    match &cli.command {
+        cli_args::Command::To { migration_id } => todo!(),
+        cli_args::Command::Top => todo!(),
+        cli_args::Command::New { name } => commands::new(&cli, &env_args, name),
+    }?;
 
     Ok(())
 }
