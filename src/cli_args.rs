@@ -9,6 +9,8 @@ pub enum Command {
     To { migration_id: u32 },
     /// Move to last added migration
     Top,
+    /// Status about DB and migrations
+    Status,
     /// Create new migration
     New { name: String },
 }

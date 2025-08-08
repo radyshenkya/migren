@@ -47,3 +47,28 @@ pub async fn top(cli: &CliArgs, env: &EnvArgs) -> Result<()> {
 
     Ok(())
 }
+
+pub async fn status(cli: &CliArgs, env: &EnvArgs) -> Result<()> {
+    let mut db_connection = connect(&env.database_url).await?;
+
+    let migration_data_file_path = PathBuf::from(MIGRATIONS_FILE_NAME);
+    let migrations_data = load_migrations_data(&migration_data_file_path)?;
+    let migren_data = db_connection.migren_data().await?;
+
+    info!("Migrations info:");
+    info!(
+        "Migrations counter is: {}",
+        migrations_data.migrations_counter
+    );
+    info!("Migren version: {}", migrations_data.migren_version);
+
+    info!("Database info:");
+    info!(
+        "Database is at migration: {} - info about migration: {:#?}",
+        migren_data.last_migration_applied,
+        migrations_data.migration_by_id(migren_data.last_migration_applied as u32),
+    );
+    info!("Migren version: {}", migren_data.migren_version);
+
+    Ok(())
+}

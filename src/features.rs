@@ -242,8 +242,8 @@ impl MigrationsData {
 
 #[derive(sqlx::FromRow, Debug)]
 pub struct DatabaseMigrenData {
-    migren_version: String,
-    last_migration_applied: i32,
+    pub migren_version: String,
+    pub last_migration_applied: i32,
 }
 
 impl Default for DatabaseMigrenData {
