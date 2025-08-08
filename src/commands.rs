@@ -25,7 +25,6 @@ pub fn new(cli: &CliArgs, env: &EnvArgs, name: &str) -> Result<()> {
     Ok(())
 }
 
-
 pub async fn to(cli: &CliArgs, env: &EnvArgs, migration_id: u32) -> Result<()> {
     let mut db_connection = connect(&env.database_url).await?;
 
@@ -33,6 +32,18 @@ pub async fn to(cli: &CliArgs, env: &EnvArgs, migration_id: u32) -> Result<()> {
     let migrations_data = load_migrations_data(&migration_data_file_path)?;
 
     db_connection.to(migrations_data, migration_id).await?;
+
+    Ok(())
+}
+
+pub async fn top(cli: &CliArgs, env: &EnvArgs) -> Result<()> {
+    let mut db_connection = connect(&env.database_url).await?;
+
+    let migration_data_file_path = PathBuf::from(MIGRATIONS_FILE_NAME);
+    let migrations_data = load_migrations_data(&migration_data_file_path)?;
+    let to_migration = migrations_data.migrations_counter;
+
+    db_connection.to(migrations_data, to_migration).await?;
 
     Ok(())
 }

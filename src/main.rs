@@ -21,7 +21,7 @@ async fn run_migren() -> errors::Result<()> {
         cli_args::Command::To { migration_id } => {
             commands::to(&cli, &env_args, *migration_id).await
         }
-        cli_args::Command::Top => todo!(),
+        cli_args::Command::Top => commands::top(&cli, &env_args).await,
         cli_args::Command::New { name } => commands::new(&cli, &env_args, name),
     }?;
 
