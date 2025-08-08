@@ -1,5 +1,6 @@
 mod cli_args;
 mod commands;
+mod database;
 mod env_args;
 mod errors;
 mod features;
@@ -14,9 +15,12 @@ async fn run_migren() -> errors::Result<()> {
     let env_args = envy::from_env::<env_args::EnvArgs>()?;
 
     create_dir_if_not_exists(&cli.directory)?;
+    std::env::set_current_dir(&cli.directory)?;
 
     match &cli.command {
-        cli_args::Command::To { migration_id } => todo!(),
+        cli_args::Command::To { migration_id } => {
+            commands::to(&cli, &env_args, *migration_id).await
+        }
         cli_args::Command::Top => todo!(),
         cli_args::Command::New { name } => commands::new(&cli, &env_args, name),
     }?;

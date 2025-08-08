@@ -2,5 +2,5 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct EnvArgs {
-    database_url: String,
+    pub database_url: String,
 }

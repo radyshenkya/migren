@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-use clap::{Parser, Subcommand};
 use crate::util::default_migrations_dir;
+use clap::{Parser, Subcommand};
 
 #[derive(Subcommand, Debug)]
 pub enum Command {
@@ -17,6 +17,7 @@ pub enum Command {
 #[command(version, about, long_about = None)]
 pub struct CliArgs {
     #[arg(short, long, default_value = default_migrations_dir().into_os_string())]
-    pub directory: PathBuf, #[command(subcommand)]
+    pub directory: PathBuf,
+    #[command(subcommand)]
     pub command: Command,
 }
