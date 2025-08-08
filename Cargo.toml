@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2024"
 authors = ["Sarygin Rodion"]
 description = "Small migration tool for relational databases."
+keywords = ["sql", "db", "database", "migrations", "migren"]
+categories = ["database", "command-line-utilities"]
 
 [dependencies]
 clap = { version = "4.5.42", features = ["derive", "string"] }
