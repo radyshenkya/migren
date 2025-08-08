@@ -7,6 +7,7 @@ mod features;
 mod util;
 
 use clap::Parser;
+use dotenv::dotenv;
 use log::error;
 use util::create_dir_if_not_exists;
 
@@ -31,6 +32,7 @@ async fn run_migren() -> errors::Result<()> {
 
 #[tokio::main]
 async fn main() {
+    dotenv().ok();
     env_logger::init();
 
     let res: errors::Result<()> = run_migren().await;
