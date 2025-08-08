@@ -6,7 +6,7 @@ authors = ["Sarygin Rodion"]
 description = "Small migration tool for relational databases."
 keywords = ["sql", "db", "database", "migrations", "migren"]
 categories = ["database", "command-line-utilities"]
-license_file = "LICENSE"
+license-file = "LICENSE"
 repository = "https://github.com/saryginrodion/migren"
 
 [dependencies]
