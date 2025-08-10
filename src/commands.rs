@@ -3,14 +3,13 @@ use std::path::PathBuf;
 
 use log::info;
 
-use crate::cli_args::CliArgs;
 use crate::database::connect;
 use crate::env_args::EnvArgs;
 use crate::errors::Result;
 use crate::features::DatabaseMigrationer;
 use crate::util::{MIGRATIONS_FILE_NAME, load_migrations_data};
 
-pub fn new(cli: &CliArgs, env: &EnvArgs, name: &str) -> Result<()> {
+pub fn new(name: &str) -> Result<()> {
     let migration_data_file_path = PathBuf::from(MIGRATIONS_FILE_NAME);
 
     let mut migration_data = load_migrations_data(&migration_data_file_path)?;
@@ -25,7 +24,8 @@ pub fn new(cli: &CliArgs, env: &EnvArgs, name: &str) -> Result<()> {
     Ok(())
 }
 
-pub async fn to(cli: &CliArgs, env: &EnvArgs, migration_id: u32) -> Result<()> {
+pub async fn to(migration_id: u32) -> Result<()> {
+    let env = envy::from_env::<EnvArgs>()?;
     let mut db_connection = connect(&env.database_url).await?;
 
     let migration_data_file_path = PathBuf::from(MIGRATIONS_FILE_NAME);
@@ -36,7 +36,8 @@ pub async fn to(cli: &CliArgs, env: &EnvArgs, migration_id: u32) -> Result<()> {
     Ok(())
 }
 
-pub async fn top(cli: &CliArgs, env: &EnvArgs) -> Result<()> {
+pub async fn top() -> Result<()> {
+    let env = envy::from_env::<EnvArgs>()?;
     let mut db_connection = connect(&env.database_url).await?;
 
     let migration_data_file_path = PathBuf::from(MIGRATIONS_FILE_NAME);
@@ -48,7 +49,8 @@ pub async fn top(cli: &CliArgs, env: &EnvArgs) -> Result<()> {
     Ok(())
 }
 
-pub async fn status(cli: &CliArgs, env: &EnvArgs) -> Result<()> {
+pub async fn status() -> Result<()> {
+    let env = envy::from_env::<EnvArgs>()?;
     let mut db_connection = connect(&env.database_url).await?;
 
     let migration_data_file_path = PathBuf::from(MIGRATIONS_FILE_NAME);
@@ -73,7 +75,8 @@ pub async fn status(cli: &CliArgs, env: &EnvArgs) -> Result<()> {
     Ok(())
 }
 
-pub async fn exec(cli: &CliArgs, env: &EnvArgs, sql_file: &PathBuf) -> Result<()> {
+pub async fn exec(sql_file: &PathBuf) -> Result<()> {
+    let env = envy::from_env::<EnvArgs>()?;
     let mut db_connection = connect(&env.database_url).await?;
     let sql_query = fs::read_to_string(sql_file)?;
     let res = db_connection.exec(&sql_query).await?;
