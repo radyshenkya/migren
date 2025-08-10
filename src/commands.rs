@@ -72,3 +72,13 @@ pub async fn status(cli: &CliArgs, env: &EnvArgs) -> Result<()> {
 
     Ok(())
 }
+
+pub async fn exec(cli: &CliArgs, env: &EnvArgs, sql_file: &PathBuf) -> Result<()> {
+    let mut db_connection = connect(&env.database_url).await?;
+    let sql_query = fs::read_to_string(sql_file)?;
+    let res = db_connection.exec(&sql_query).await?;
+
+    info!("Execution result: {:#?}", res);
+
+    Ok(())
+}

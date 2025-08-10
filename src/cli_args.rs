@@ -11,6 +11,8 @@ pub enum Command {
     Top,
     /// Status about DB and migrations
     Status,
+    /// Execute .sql file for db
+    Exec { sql_file: PathBuf },
     /// Create new migration
     New { name: String },
 }

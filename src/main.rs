@@ -20,11 +20,12 @@ async fn run_migren() -> errors::Result<()> {
 
     match &cli.command {
         cli_args::Command::To { migration_id } => {
-            commands::to(&cli, &env_args, *migration_id).await
-        }
+                commands::to(&cli, &env_args, *migration_id).await
+            }
         cli_args::Command::Top => commands::top(&cli, &env_args).await,
         cli_args::Command::New { name } => commands::new(&cli, &env_args, name),
         cli_args::Command::Status => commands::status(&cli, &env_args).await,
+        cli_args::Command::Exec { sql_file } => commands::exec(&cli, &env_args, sql_file).await,
     }?;
 
     Ok(())

@@ -1,6 +1,6 @@
 use std::{collections::HashSet, path::PathBuf};
 
-use log::{debug, error, info};
+use log::{debug, info};
 use serde::{Deserialize, Serialize};
 use sqlx::Connection;
 
@@ -80,10 +80,7 @@ impl MigrationsData {
     }
 
     /// Create new migrations files + modify migrations_data
-    pub fn new_migration(
-        &mut self,
-        migration_name: &str,
-    ) -> Result<&MigrationData> {
+    pub fn new_migration(&mut self, migration_name: &str) -> Result<&MigrationData> {
         let migration_id = self.migrations_counter + 1;
         let last_migration_id = self
             .migration_by_id(self.migrations_counter)
@@ -91,8 +88,7 @@ impl MigrationsData {
 
         info!("New migration id is {migration_id}");
         info!("Found last migration: {last_migration_id:?}");
-        let migration_files =
-            create_migration_files(migration_id, migration_name)?;
+        let migration_files = create_migration_files(migration_id, migration_name)?;
 
         let migration = MigrationData {
             files: migration_files,
@@ -259,6 +255,8 @@ pub trait DatabaseMigrationer {
     async fn migren_data(&mut self) -> Result<DatabaseMigrenData>;
     async fn set_migren_data(&mut self, data: DatabaseMigrenData) -> Result<()>;
     async fn to(&mut self, migrations_data: MigrationsData, migration_id: u32) -> Result<()>;
+    async fn exec(&mut self, sql_query: &str)
+    -> Result<<sqlx::Any as sqlx::Database>::QueryResult>;
 }
 
 impl DatabaseMigrationer for sqlx::AnyConnection {
@@ -327,5 +325,12 @@ impl DatabaseMigrationer for sqlx::AnyConnection {
         info!("Transaction completed");
 
         Ok(())
+    }
+
+    async fn exec(
+        &mut self,
+        sql_query: &str,
+    ) -> Result<<sqlx::Any as sqlx::Database>::QueryResult> {
+        Ok(sqlx::query(sql_query).execute(&mut *self).await?)
     }
 }
