@@ -1,12 +1,11 @@
 use std::{collections::HashSet, path::PathBuf};
 
-use log::{debug, info};
+use log::{debug, info, warn};
 use serde::{Deserialize, Serialize};
 use sqlx::Connection;
 
 use crate::{
-    errors::{MigrenError, Result},
-    util::{assert_migration_files_exists, create_migration_files},
+    derictive_constants::SqlDirective, errors::{MigrenError, Result}, util::{assert_migration_files_exists, create_migration_files}
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -311,7 +310,38 @@ impl DatabaseMigrationer for sqlx::AnyConnection {
 
         for migration in migration_path.into_iter() {
             let sql_code = std::fs::read_to_string(&migration.file)?;
-            sqlx::query(&sql_code).execute(&mut *tx).await?;
+
+            // TODO: MIG-23 - move usage of this derictive into distinct place + maybe add a couple
+            // extra derictives.
+            let mut statement_buffer = String::new();
+            for line in sql_code.lines() {
+                if let Some(derictive) = SqlDirective::match_str(line) {
+                    debug!("Found directive: {derictive:?}");
+                    match derictive {
+                        SqlDirective::Split => {
+                            sqlx::query(&statement_buffer).execute(&mut *tx).await?;
+                            statement_buffer = String::new();
+                        }
+                    }
+                }
+
+                statement_buffer.push_str(line);
+                statement_buffer.push_str("\n");
+            }
+            
+            sqlx::query(&statement_buffer).execute(&mut *tx).await?;
+
+            let semicolons_count = sql_code
+                .as_bytes()
+                .iter()
+                .filter(|x| **x == ';' as u8)
+                .count();
+            if semicolons_count > 1 {
+                warn!(
+                    "Multiple semicolons found in the same query! Suggest using only one command in file, because it can lead to some problems... Semicolons count: {semicolons_count}"
+                );
+            }
+
             info!("Applied file {:?}", &migration.file);
         }
 

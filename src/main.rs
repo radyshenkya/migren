@@ -4,6 +4,7 @@ mod database;
 mod env_args;
 mod errors;
 mod features;
+mod derictive_constants;
 mod util;
 
 use clap::Parser;
